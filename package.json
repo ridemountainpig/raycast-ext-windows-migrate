@@ -1,0 +1,51 @@
+{
+    "name": "raycast-ext-windows-migrate",
+    "version": "0.0.1",
+    "description": "A CLI tool to migrate Raycast extensions to support Windows platform",
+    "main": "dist/index.js",
+    "bin": {
+        "raycast-ext-windows-migrate": "./dist/index.js"
+    },
+    "type": "module",
+    "files": [
+        "dist"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "type-check": "tsc --noEmit",
+        "lint": "prettier --check ."
+    },
+    "keywords": [
+        "raycast",
+        "windows",
+        "migration",
+        "cli",
+        "automation",
+        "raycast-extension"
+    ],
+    "author": "ridemountainpig",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ridemountainpig/raycast-ext-windows-migrate.git"
+    },
+    "bugs": {
+        "url": "https://github.com/ridemountainpig/raycast-ext-windows-migrate/issues"
+    },
+    "dependencies": {
+        "chalk": "^5.6.2",
+        "ora": "^9.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^24.10.1",
+        "prettier": "^3.7.3",
+        "tsup": "^8.5.1",
+        "typescript": "^5.9.3"
+    }
+}

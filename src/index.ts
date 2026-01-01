@@ -5,55 +5,120 @@ import { updateDependencies, runCommand } from "./utils/updateDependencies.js";
 import { updateEslintConfig } from "./utils/updateEslint.js";
 import { updatePackageJsonPlatforms } from "./utils/updatePackageJson.js";
 
+function showHelp() {
+    console.log(
+        chalk.bold.cyan("\n🚀 Raycast Extension Windows Migration Tool\n"),
+    );
+
+    console.log(chalk.bold("Usage:"));
+    console.log(chalk.gray("  raycast-ext-windows-migrate [options]\n"));
+
+    console.log(chalk.bold("Options:"));
+    console.log(chalk.white.bold("  -s, --skip-mac-check"));
+    console.log(
+        chalk.gray(
+            "      Skip the AppleScript and Mac-specific commands check.",
+        ),
+    );
+    console.log(
+        chalk.gray(
+            "      Use if you've already implemented cross-platform alternatives.\n",
+        ),
+    );
+    console.log(chalk.white.bold("  -h, --help"));
+    console.log(chalk.gray("      Show this help message.\n"));
+
+    console.log(chalk.bold("Steps:"));
+    console.log(
+        chalk.gray(
+            "  1. Check AppleScript and Mac-specific commands (optional, skipped with -s)",
+        ),
+    );
+    console.log(
+        chalk.gray("  2. Update all dependencies to the latest version"),
+    );
+    console.log(chalk.gray("  3. Configure ESLint to the latest format"));
+    console.log(
+        chalk.gray("  4. Update package.json to add Windows platform support"),
+    );
+    console.log(chalk.gray("  5. Run lint and build checks\n"));
+    process.exit(0);
+}
+
 async function main() {
+    // Parse command-line arguments
+    if (process.argv.includes("--help") || process.argv.includes("-h")) {
+        showHelp();
+    }
+
     const projectPath = process.cwd();
+    const skipMacCheck =
+        process.argv.includes("--skip-mac-check") ||
+        process.argv.includes("-s");
 
     console.log(
         chalk.bold.cyan("\n🚀 Raycast Extension Windows Migration Tool\n"),
     );
 
-    // Step 1: Check AppleScript usage and Mac commands
+    // Step 1: Check AppleScript usage and Mac commands (optional)
     console.log(
         chalk.bold("Step 1/6: Check AppleScript usage and Mac commands"),
     );
-    const spinner1 = ora("Scanning project files...").start();
+    if (!skipMacCheck) {
+        const spinner1 = ora("Scanning project files...").start();
 
-    const macSpecificCheck = checkMacSpecificCode(projectPath);
+        const macSpecificCheck = checkMacSpecificCode(projectPath);
 
-    if (macSpecificCheck.hasAppleScript || macSpecificCheck.hasMacCommands) {
-        spinner1.fail(
-            chalk.red("AppleScript or Mac-specific commands detected!"),
-        );
+        if (
+            macSpecificCheck.hasAppleScript ||
+            macSpecificCheck.hasMacCommands
+        ) {
+            spinner1.fail(
+                chalk.red("AppleScript or Mac-specific commands detected!"),
+            );
 
-        if (macSpecificCheck.hasAppleScript) {
-            console.log(chalk.yellow("\nThe following files use AppleScript:"));
-            macSpecificCheck.files.forEach((file) => {
-                console.log(chalk.yellow(`  - ${file}`));
-            });
-        }
+            if (macSpecificCheck.hasAppleScript) {
+                console.log(
+                    chalk.yellow("\nThe following files use AppleScript:"),
+                );
+                macSpecificCheck.files.forEach((file) => {
+                    console.log(chalk.yellow(`  - ${file}`));
+                });
+            }
 
-        if (macSpecificCheck.hasMacCommands) {
+            if (macSpecificCheck.hasMacCommands) {
+                console.log(
+                    chalk.yellow(
+                        "\nThe following files use Mac-specific commands:",
+                    ),
+                );
+                macSpecificCheck.macCommandFiles.forEach((file) => {
+                    console.log(chalk.yellow(`  - ${file}`));
+                });
+            }
+
             console.log(
-                chalk.yellow(
-                    "\nThe following files use Mac-specific commands:",
+                chalk.red(
+                    "\n❌ This extension cannot be converted to support Windows because it uses AppleScript or Mac-specific commands.\n",
                 ),
             );
-            macSpecificCheck.macCommandFiles.forEach((file) => {
-                console.log(chalk.yellow(`  - ${file}`));
-            });
+            console.log(
+                chalk.yellow(
+                    "💡 Tip: If you've already implemented cross-platform alternatives, use --skip-mac-check (or -s) to bypass this check.\n",
+                ),
+            );
+            process.exit(1);
         }
 
-        console.log(
-            chalk.red(
-                "\n❌ This extension cannot be converted to support Windows because it uses AppleScript or Mac-specific commands.\n",
-            ),
+        spinner1.succeed(
+            chalk.green("No AppleScript or Mac-specific commands detected"),
         );
-        process.exit(1);
+    } else {
+        const spinner1 = ora("Skipped").start();
+        spinner1.succeed(
+            chalk.gray("Skipped (--skip-mac-check or -s flag detected)"),
+        );
     }
-
-    spinner1.succeed(
-        chalk.green("No AppleScript or Mac-specific commands detected"),
-    );
 
     // Step 2: Update dependencies
     console.log(chalk.bold("\nStep 2/6: Update dependencies"));

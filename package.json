@@ -1,6 +1,6 @@
 {
     "name": "raycast-ext-windows-migrate",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "A CLI tool to migrate Raycast extensions to support Windows platform",
     "main": "dist/index.js",
     "bin": {

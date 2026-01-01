@@ -37,7 +37,7 @@ The tool will automatically:
 ### Flags
 
 ```
--s, --skip-applescript
+-s, --skip-mac-check
     Skip the AppleScript and Mac-specific commands check.
     Use if you've already implemented cross-platform alternatives.
 

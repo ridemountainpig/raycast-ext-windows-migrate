@@ -14,7 +14,7 @@ function showHelp() {
     console.log(chalk.gray("  raycast-ext-windows-migrate [options]\n"));
 
     console.log(chalk.bold("Options:"));
-    console.log(chalk.white.bold("  -s, --skip-applescript"));
+    console.log(chalk.white.bold("  -s, --skip-mac-check"));
     console.log(
         chalk.gray(
             "      Skip the AppleScript and Mac-specific commands check.",
@@ -52,8 +52,8 @@ async function main() {
     }
 
     const projectPath = process.cwd();
-    const skipAppleScript =
-        process.argv.includes("--skip-applescript") ||
+    const skipMacCheck =
+        process.argv.includes("--skip-mac-check") ||
         process.argv.includes("-s");
 
     console.log(
@@ -64,7 +64,7 @@ async function main() {
     console.log(
         chalk.bold("Step 1/6: Check AppleScript usage and Mac commands"),
     );
-    if (!skipAppleScript) {
+    if (!skipMacCheck) {
         const spinner1 = ora("Scanning project files...").start();
 
         const macSpecificCheck = checkMacSpecificCode(projectPath);
@@ -104,7 +104,7 @@ async function main() {
             );
             console.log(
                 chalk.yellow(
-                    "💡 Tip: If you've already implemented Windows PowerShell alternatives, use --skip-applescript (or -s) to bypass this check.\n",
+                    "💡 Tip: If you've already implemented cross-platform alternatives, use --skip-mac-check (or -s) to bypass this check.\n",
                 ),
             );
             process.exit(1);
@@ -116,7 +116,7 @@ async function main() {
     } else {
         const spinner1 = ora("Skipped").start();
         spinner1.succeed(
-            chalk.gray("Skipped (--skip-applescript or -s flag detected)"),
+            chalk.gray("Skipped (--skip-mac-check or -s flag detected)"),
         );
     }
 

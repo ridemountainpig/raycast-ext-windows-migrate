@@ -9,30 +9,29 @@ function showHelp() {
     console.log(
         chalk.bold.cyan("\n🚀 Raycast Extension Windows Migration Tool\n"),
     );
+
     console.log(chalk.bold("Usage:"));
     console.log(chalk.gray("  raycast-ext-windows-migrate [options]\n"));
+
     console.log(chalk.bold("Options:"));
-    // Nicer, better-formatted options
+    console.log(chalk.white.bold("  -s, --skip-applescript"));
     console.log(
-        chalk.white.bold("  --skip-applescript, -s"),
-        "\n    ",
-        chalk.gray("Skip the AppleScript usage check."),
-        "\n    ",
         chalk.gray(
-            "Use if you've already implemented Windows PowerShell alternatives.",
+            "      Skip the AppleScript and Mac-specific commands check.",
         ),
-        "\n",
     );
     console.log(
-        chalk.white.bold("  --help, -h"),
-        "\n    ",
-        chalk.gray("Show this help message."),
-        "\n",
+        chalk.gray(
+            "      Use if you've already implemented cross-platform alternatives.\n",
+        ),
     );
+    console.log(chalk.white.bold("  -h, --help"));
+    console.log(chalk.gray("      Show this help message.\n"));
+
     console.log(chalk.bold("Steps:"));
     console.log(
         chalk.gray(
-            "  1. Check AppleScript usage (optional, skipped with -s flag)",
+            "  1. Check AppleScript and Mac-specific commands (optional, skipped with -s)",
         ),
     );
     console.log(
@@ -70,13 +69,18 @@ async function main() {
 
         const macSpecificCheck = checkMacSpecificCode(projectPath);
 
-        if (macSpecificCheck.hasAppleScript || macSpecificCheck.hasMacCommands) {
+        if (
+            macSpecificCheck.hasAppleScript ||
+            macSpecificCheck.hasMacCommands
+        ) {
             spinner1.fail(
                 chalk.red("AppleScript or Mac-specific commands detected!"),
             );
 
             if (macSpecificCheck.hasAppleScript) {
-                console.log(chalk.yellow("\nThe following files use AppleScript:"));
+                console.log(
+                    chalk.yellow("\nThe following files use AppleScript:"),
+                );
                 macSpecificCheck.files.forEach((file) => {
                     console.log(chalk.yellow(`  - ${file}`));
                 });
@@ -115,7 +119,6 @@ async function main() {
             chalk.gray("Skipped (--skip-applescript or -s flag detected)"),
         );
     }
-
 
     // Step 2: Update dependencies
     console.log(chalk.bold("\nStep 2/6: Update dependencies"));
